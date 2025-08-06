@@ -11,25 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  Video,
-  Mic,
-  MicOff,
-  VideoOff,
-  Play,
-  Square,
-  Plus,
-  Edit,
-  Trash2,
-  Bot,
-  Clock,
-  Activity,
-  Upload,
-  FileText,
-  CheckCircle,
-  Loader2,
-  Send,
-} from "lucide-react"
+import { Video, Mic, MicOff, VideoOff, Play, Square, Plus, Edit, Trash2, Bot, Clock, Activity, Upload, FileText, CheckCircle, Loader2, Send } from 'lucide-react'
 
 interface Question {
   id: number
@@ -99,11 +81,11 @@ export default function LiveInterviewPage() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editText, setEditText] = useState("")
 
-  // Resume Upload State
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+  // Resume Upload State (add this after existing state)
+  const [resumeFile, setResumeFile] = useState<File | null>(null)
   const [isProcessingResume, setIsProcessingResume] = useState(false)
-  const [resumeData, setResumeData] = useState<ResumeData | null>(null)
-  const [personalizedQuestions, setPersonalizedQuestions] = useState<PersonalizedQuestion[]>([])
+  const [resumeData, setResumeData] = useState<any>(null)
+  const [personalizedQuestions, setPersonalizedQuestions] = useState<any[]>([])
   const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false)
 
   // Interview State
@@ -174,56 +156,34 @@ export default function LiveInterviewPage() {
     setEditText("")
   }
 
-  // Resume Upload Functions
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Resume Upload Functions (add after custom questions functions)
+  const handleResumeFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file && (file.type === "application/pdf" || file.type.includes("document"))) {
-      setUploadedFile(file)
+      setResumeFile(file)
       processResume(file)
+    } else {
+      alert("Please select a valid PDF or DOC file")
     }
   }
 
   const processResume = async (file: File) => {
     setIsProcessingResume(true)
 
-    // Mock resume processing - Replace with Flask API call
     try {
       // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 3000))
 
       // Mock extracted resume data
-      const mockResumeData: ResumeData = {
+      const mockResumeData = {
         name: "John Doe",
         email: "john.doe@email.com",
-        phone: "+1 (555) 123-4567",
-        education: [
-          {
-            degree: "Bachelor of Science in Computer Science",
-            institution: "University of Technology",
-            year: "2020",
-          },
-          {
-            degree: "Master of Science in Software Engineering",
-            institution: "Tech Institute",
-            year: "2022",
-          },
-        ],
+        skills: ["JavaScript", "React", "Node.js", "Python", "SQL"],
         experience: [
-          {
-            title: "Software Developer",
-            company: "Tech Solutions Inc.",
-            duration: "2022 - Present",
-            description: "Developed web applications using React and Node.js",
-          },
-          {
-            title: "Junior Developer",
-            company: "StartupXYZ",
-            duration: "2020 - 2022",
-            description: "Built mobile applications and worked on database optimization",
-          },
+          { title: "Software Developer", company: "Tech Solutions Inc.", duration: "2022 - Present" },
+          { title: "Junior Developer", company: "StartupXYZ", duration: "2020 - 2022" },
         ],
-        skills: ["JavaScript", "React", "Node.js", "Python", "SQL", "MongoDB", "AWS"],
-        summary: "Experienced software developer with 3+ years in full-stack development",
+        education: [{ degree: "Bachelor of Science in Computer Science", institution: "University of Technology", year: "2020" }],
       }
 
       setResumeData(mockResumeData)
@@ -235,58 +195,43 @@ export default function LiveInterviewPage() {
     }
   }
 
-  const generatePersonalizedQuestions = async (resumeData: ResumeData) => {
+  const generatePersonalizedQuestions = async (resumeData: any) => {
     setIsGeneratingQuestions(true)
 
     try {
-      // Mock AI question generation - Replace with OpenAI API call
+      // Mock AI question generation
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      const mockPersonalizedQuestions: PersonalizedQuestion[] = [
+      const mockQuestions = [
         {
           id: 1,
-          question: `I see you have a ${resumeData.education[0]?.degree}. How has your computer science background prepared you for this role?`,
-          category: "Education",
-          basedOn: "Bachelor's degree in Computer Science",
+          question: `I see you have experience with ${resumeData.skills.slice(0, 3).join(", ")}. Can you tell me about a challenging project you worked on using these technologies?`,
+          category: "Technical Skills",
         },
         {
           id: 2,
-          question: `You've worked as a ${resumeData.experience[0]?.title} at ${resumeData.experience[0]?.company}. Can you tell me about a challenging project you worked on there?`,
+          question: `You've worked as a ${resumeData.experience[0]?.title} at ${resumeData.experience[0]?.company}. What was your biggest achievement in this role?`,
           category: "Experience",
-          basedOn: "Current role at Tech Solutions Inc.",
         },
         {
           id: 3,
-          question: `I notice you have experience with ${resumeData.skills.slice(0, 3).join(", ")}. Which of these technologies do you feel most confident with and why?`,
-          category: "Technical Skills",
-          basedOn: "JavaScript, React, Node.js skills",
-        },
-        {
-          id: 4,
-          question: `Your resume shows you've progressed from Junior Developer to Software Developer. What key skills did you develop during this transition?`,
-          category: "Career Growth",
-          basedOn: "Career progression shown in experience",
-        },
-        {
-          id: 5,
-          question: `You mention experience with both web and mobile applications. How do you approach learning new technologies?`,
-          category: "Learning & Adaptability",
-          basedOn: "Diverse technical experience",
-        },
-        {
-          id: 6,
-          question: `Given your background in ${resumeData.skills.includes("AWS") ? "cloud technologies" : "full-stack development"}, how would you handle scaling a web application?`,
-          category: "Problem Solving",
-          basedOn: "Technical expertise in scaling solutions",
+          question: `Given your background in ${resumeData.education[0]?.degree}, how do you stay updated with the latest technology trends?`,
+          category: "Education",
         },
       ]
 
-      setPersonalizedQuestions(mockPersonalizedQuestions)
+      setPersonalizedQuestions(mockQuestions)
     } catch (error) {
       console.error("Error generating questions:", error)
     } finally {
       setIsGeneratingQuestions(false)
     }
+  }
+
+  const removeResumeFile = () => {
+    setResumeFile(null)
+    setResumeData(null)
+    setPersonalizedQuestions([])
   }
 
   // Media Functions
@@ -917,7 +862,7 @@ export default function LiveInterviewPage() {
 
             {/* Personalized Interview Tab */}
             <TabsContent value="personalized" className="space-y-8">
-              {/* Resume Upload Section */}
+              {/* Resume Upload Section - Add this at the beginning of personalized TabsContent */}
               <Card className="border-0 shadow-sm">
                 <CardHeader>
                   <CardTitle className="text-2xl" style={{ color: "#111827" }}>
@@ -928,26 +873,30 @@ export default function LiveInterviewPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {!uploadedFile ? (
+                  {!resumeFile ? (
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-green-400 transition-colors">
                       <input
-                        ref={fileInputRef}
                         type="file"
                         accept=".pdf,.doc,.docx"
-                        onChange={handleFileUpload}
+                        onChange={handleResumeFileChange}
                         className="hidden"
+                        id="resume-upload-live"
                       />
                       <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                       <h3 className="text-lg font-medium text-gray-900 mb-2">Upload Resume</h3>
                       <p className="text-gray-600 mb-4">Drag and drop your resume here, or click to browse</p>
-                      <Button
-                        onClick={() => fileInputRef.current?.click()}
-                        variant="outline"
-                        className="border-green-500 text-green-600 hover:bg-green-50"
-                      >
-                        <FileText className="w-4 h-4 mr-2" />
-                        Choose File
-                      </Button>
+                      <label htmlFor="resume-upload-live">
+                        <Button
+                          variant="outline"
+                          className="border-green-500 text-green-600 hover:bg-green-50 cursor-pointer"
+                          asChild
+                        >
+                          <span>
+                            <FileText className="w-4 h-4 mr-2" />
+                            Choose File
+                          </span>
+                        </Button>
+                      </label>
                       <p className="text-sm text-gray-500 mt-2">Supports PDF, DOC, DOCX files up to 10MB</p>
                     </div>
                   ) : (
@@ -956,17 +905,13 @@ export default function LiveInterviewPage() {
                       <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
                         <CheckCircle className="w-5 h-5 text-green-600" />
                         <div className="flex-1">
-                          <p className="font-medium text-green-800">{uploadedFile.name}</p>
-                          <p className="text-sm text-green-600">{(uploadedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                          <p className="font-medium text-green-800">{resumeFile.name}</p>
+                          <p className="text-sm text-green-600">{(resumeFile.size / 1024 / 1024).toFixed(2)} MB</p>
                         </div>
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => {
-                            setUploadedFile(null)
-                            setResumeData(null)
-                            setPersonalizedQuestions([])
-                          }}
+                          onClick={removeResumeFile}
                           className="text-red-600 border-red-300 hover:bg-red-50"
                         >
                           Remove
@@ -976,7 +921,7 @@ export default function LiveInterviewPage() {
                       {/* Processing Status */}
                       {isProcessingResume && (
                         <div className="flex items-center gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                          <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+                          <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                           <div>
                             <p className="font-medium text-blue-800">Processing Resume...</p>
                             <p className="text-sm text-blue-600">Extracting your education, experience, and skills</p>
@@ -995,51 +940,14 @@ export default function LiveInterviewPage() {
                           <div className="grid md:grid-cols-2 gap-4">
                             <Card className="bg-gray-50">
                               <CardHeader className="pb-3">
-                                <CardTitle className="text-sm font-medium text-gray-700">Personal Info</CardTitle>
-                              </CardHeader>
-                              <CardContent className="pt-0">
-                                <div className="space-y-1 text-sm">
-                                  <p>
-                                    <strong>Name:</strong> {resumeData.name}
-                                  </p>
-                                  <p>
-                                    <strong>Email:</strong> {resumeData.email}
-                                  </p>
-                                  <p>
-                                    <strong>Phone:</strong> {resumeData.phone}
-                                  </p>
-                                </div>
-                              </CardContent>
-                            </Card>
-
-                            <Card className="bg-gray-50">
-                              <CardHeader className="pb-3">
                                 <CardTitle className="text-sm font-medium text-gray-700">Skills</CardTitle>
                               </CardHeader>
                               <CardContent className="pt-0">
                                 <div className="flex flex-wrap gap-1">
-                                  {resumeData.skills.map((skill, index) => (
+                                  {resumeData.skills.map((skill: string, index: number) => (
                                     <Badge key={index} variant="secondary" className="text-xs">
                                       {skill}
                                     </Badge>
-                                  ))}
-                                </div>
-                              </CardContent>
-                            </Card>
-
-                            <Card className="bg-gray-50">
-                              <CardHeader className="pb-3">
-                                <CardTitle className="text-sm font-medium text-gray-700">Education</CardTitle>
-                              </CardHeader>
-                              <CardContent className="pt-0">
-                                <div className="space-y-2">
-                                  {resumeData.education.map((edu, index) => (
-                                    <div key={index} className="text-sm">
-                                      <p className="font-medium">{edu.degree}</p>
-                                      <p className="text-gray-600">
-                                        {edu.institution} ({edu.year})
-                                      </p>
-                                    </div>
                                   ))}
                                 </div>
                               </CardContent>
@@ -1051,12 +959,10 @@ export default function LiveInterviewPage() {
                               </CardHeader>
                               <CardContent className="pt-0">
                                 <div className="space-y-2">
-                                  {resumeData.experience.map((exp, index) => (
+                                  {resumeData.experience.map((exp: any, index: number) => (
                                     <div key={index} className="text-sm">
                                       <p className="font-medium">{exp.title}</p>
-                                      <p className="text-gray-600">
-                                        {exp.company} ({exp.duration})
-                                      </p>
+                                      <p className="text-gray-600">{exp.company} ({exp.duration})</p>
                                     </div>
                                   ))}
                                 </div>
@@ -1069,7 +975,7 @@ export default function LiveInterviewPage() {
                       {/* Question Generation Status */}
                       {isGeneratingQuestions && (
                         <div className="flex items-center gap-3 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                          <Loader2 className="w-5 h-5 text-purple-600 animate-spin" />
+                          <div className="w-5 h-5 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
                           <div>
                             <p className="font-medium text-purple-800">Generating Personalized Questions...</p>
                             <p className="text-sm text-purple-600">AI is creating questions based on your resume</p>
@@ -1088,7 +994,7 @@ export default function LiveInterviewPage() {
                           </div>
 
                           <div className="space-y-3">
-                            {personalizedQuestions.map((question, index) => (
+                            {personalizedQuestions.map((question: any, index: number) => (
                               <div key={question.id} className="p-4 border border-gray-200 rounded-lg bg-white">
                                 <div className="flex items-start gap-3">
                                   <span className="text-sm font-medium text-gray-500 min-w-[2rem] mt-1">
@@ -1096,12 +1002,9 @@ export default function LiveInterviewPage() {
                                   </span>
                                   <div className="flex-1">
                                     <p className="text-gray-800 mb-2">{question.question}</p>
-                                    <div className="flex gap-2">
-                                      <Badge variant="outline" className="text-xs">
-                                        {question.category}
-                                      </Badge>
-                                      <span className="text-xs text-gray-500">Based on: {question.basedOn}</span>
-                                    </div>
+                                    <Badge variant="outline" className="text-xs">
+                                      {question.category}
+                                    </Badge>
                                   </div>
                                 </div>
                               </div>
