@@ -17,5 +17,5 @@ services:
     env: node
     plan: free
     buildCommand: npm install && npm run build
-    startCommand: npm start
-    rootDir: app
+    startCommand: npm run start
+    rootDir: .
