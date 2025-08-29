@@ -4,15 +4,15 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 
-export default function SignupPage() {
+export default function SigninPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSignin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -20,15 +20,15 @@ export default function SignupPage() {
     if (error) {
       alert(error.message);
     } else {
-      alert("Signup successful! You can now sign in.");
-      router.push("/auth/signin");
+      alert("Signin successful!");
+      router.push("/dashboard"); // redirect after login
     }
   };
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <form onSubmit={handleSignup} className="p-6 border rounded w-80">
-        <h2 className="text-xl mb-4 font-bold">Sign Up</h2>
+      <form onSubmit={handleSignin} className="p-6 border rounded w-80">
+        <h2 className="text-xl mb-4 font-bold">Sign In</h2>
         <input
           type="email"
           placeholder="Email"
@@ -43,8 +43,8 @@ export default function SignupPage() {
           onChange={(e) => setPassword(e.target.value)}
           className="border p-2 mb-4 w-full"
         />
-        <button type="submit" className="bg-blue-500 text-white w-full py-2 rounded">
-          Sign Up
+        <button type="submit" className="bg-green-500 text-white w-full py-2 rounded">
+          Sign In
         </button>
       </form>
     </div>
