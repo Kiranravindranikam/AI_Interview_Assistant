@@ -1,47 +1,24 @@
-'use client'
-import { useState } from 'react'
-import { supabase } from '../../../lib/supabaseClient'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabaseClient'; // ✅ Only one import
 
 export default function SignupPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const router = useRouter()
+  const [email, setEmail] = useState('');
+  const router = useRouter();
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
-
+  const handleSignup = async () => {
+    const { error } = await supabase.auth.signUp({ email });
     if (error) {
-      alert(error.message)
+      console.error(error);
     } else {
-      alert('Check your email for confirmation link.')
-      router.push('/auth/signin')
+      router.push('/auth/signup/signin');
     }
-  }
+  };
 
   return (
     <div>
-      <h1>Signup</h1>
-      <form onSubmit={handleSignup}>
-        <input
-          type="email"
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Signup</button>
-      </form>
+      <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter email" />
+      <button onClick={handleSignup}>Sign Up</button>
     </div>
-  )
+  );
 }

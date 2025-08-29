@@ -1,7 +1,6 @@
-// lib/supabaseClient.ts
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'http://pvbsvfofpstvioinrvjn.supabase.co'
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2YnN2Zm9mcHN0dmlvaW5ydmpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MTY4MjksImV4cCI6MjA2OTk5MjgyOX0.t3keHIiAxqNEFE32uLeUsCSqHsSJPOcq7pVYOl7EyAk'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
